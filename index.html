@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>19x19</title>
+    <style type="text/css">
+      body {
+        margin: 20px;
+        overflow-y: scroll;
+        width: calc(6px * 4 + 20px + 684px);
+      }
+
+      .top-label {
+        margin: 6px;
+        margin-left: calc(20px + 6px * 3);
+        width:  684px;
+        height: 20px;
+      }
+
+      .top-label > l {
+        width: calc(100% / 19);
+        text-align: center;
+        float: left;
+        font-family: monospace;
+      }
+
+      .left-label {
+        margin: 6px;
+        width:  20px;
+        height: 684px;
+        margin-left: 0px;
+        padding-right: 6px;
+        float: left;
+      }
+
+      .left-label > l {
+        height: calc(100% / 19);
+        line-height: 36px; /* == calc(100% / 19) */
+        text-align: right;
+        font-family: monospace;
+        display: block;
+      }
+
+      .board {
+        width:  684px;
+        height: 684px;
+        background: #E4BB67;
+        border: 6px #E4BB67 solid;
+        box-shadow: 10px 10px 0 #000;
+        position: relative;
+        float: left;
+        display: inline;
+      }
+
+      .board > svg {
+        width:  100%;
+        height: 100%;
+        position: absolute;
+        z-index: 0;
+      }
+
+      .points {
+        width:  684px;
+        height: 684px;
+        position: absolute;
+        z-index: 2;
+      }
+
+      .points > * {
+        width:  calc(100% / 19 - 2px);
+        height: calc(100% / 19 - 2px);
+        float: left;
+        margin: 1px;
+        border-radius: 50%;
+      }
+
+      .points > b {
+        background: #333333;
+      }
+
+      .points > w {
+        background: #F3F3F3;
+        box-shadow: 2px 2px rgba(0, 0, 0, 0.6);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-label">
+      <l>A</l><l>B</l><l>C</l><l>D</l><l>E</l>
+      <l>F</l><l>G</l><l>H</l><l>I</l><l>J</l>
+      <l>K</l><l>L</l><l>M</l><l>N</l><l>O</l>
+      <l>P</l><l>Q</l><l>R</l><l>S</l>
+    </div>
+
+    <div class="left-label">
+      <l>1</l><l>2</l><l>3</l><l>4</l><l>5</l>
+      <l>6</l><l>7</l> <l>8</l><l>9</l><l>10</l>
+      <l>11</l><l>12</l><l>13</l><l>14</l><l>15</l>
+      <l>16</l><l>17</l><l>18</l><l>19</l>
+    </div>
+
+    <div class="board">
+      <!-- 25% -> .1, 50% -> .08 -->
+      <svg viewBox="0.045 0.045 76.045 76.045" shape-rendering="geometricPrecision">
+        <rect width="72" height="72" x="2" y="2" stroke="#111" stroke-width=".1" fill="none"/>
+        <path stroke="#111" stroke-width=".1" fill="none" d="
+          M 2 2 h  72  m 0 4 h -72  m 0 4 h  72  m 0 4 h -72  m 0 4 h  72
+          m 0 4 h -72  m 0 4 h  72  m 0 4 h -72  m 0 4 h  72  m 0 4 h -72
+          m 0 4 h  72  m 0 4 h -72  m 0 4 h  72  m 0 4 h -72  m 0 4 h  72
+          m 0 4 h -72  m 0 4 h  72  m 0 4 h -72  M 2 2 v  72  m 4 0 v -72
+          m 4 0 v  72  m 4 0 v -72  m 4 0 v  72  m 4 0 v -72  m 4 0 v  72
+          m 4 0 v -72  m 4 0 v  72  m 4 0 v -72  m 4 0 v  72  m 4 0 v -72
+          m 4 0 v  72  m 4 0 v -72  m 4 0 v  72  m 4 0 v -72  m 4 0 v  72
+          m 4 0 v -72
+        "/>
+        <path stroke="#111" stroke-width=".6" stroke-linecap="round" d="
+          m 14 62  l 0 0  m 24  0 l 0 0  m 24  0 l 0 0
+          m 0 -24 l 0 0  m -24 0 l 0 0  m -24 0 l 0 0
+          m 0 -24 l 0 0  m 24  0 l 0 0  m 24  0 l 0 0
+        "/>
+      </svg>
+      <div class="points">
+        <e></e><e></e><b></b><e></e><b></b><e></e><e></e><b></b><b></b><w></w><w></w><w></w><w></w><w></w><w></w><w></w><w></w><w></w><b></b><w></w>
+
+        <e></e><e></e><b></b><b></b><e></e><w></w><e></e><w></w><e></e><e></e><b></b><b></b><e></e><w></w><e></e><e></e><e></e><b></b><b></b>
+
+        <b></b><b></b><e></e><e></e><b></b><b></b><b></b><e></e><e></e><w></w><w></w><e></e><e></e><w></w><w></w><e></e><b></b><b></b><b></b>
+
+        <e></e><e></e><e></e><w></w><w></w><e></e><b></b><b></b><e></e><e></e><e></e><e></e><w></w><w></w><e></e><b></b><e></e><e></e><e></e>
+
+        <w></w><w></w><e></e><e></e><e></e>
+      </div>
+    </div>
+  </body>
+</html>
