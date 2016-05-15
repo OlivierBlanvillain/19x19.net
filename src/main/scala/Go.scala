@@ -1,3 +1,5 @@
+package game
+
 import cats.data.{NonEmptyList, Xor}
 import cats.std.list._
 
@@ -123,4 +125,8 @@ object Go {
   // 9. A player's score is the number of points of her color, plus the number of empty points that reach only her color.
 
   // 10. The player with the higher score at the end of the game is the winner. Equal scores result in a tie.
+}
+case class Point19(x: Int, y: Int) {
+  require(x >= 1 && x <= 19)
+  require(y >= 1 && y <= 19)
 }
