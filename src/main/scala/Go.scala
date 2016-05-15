@@ -123,6 +123,17 @@ object Go {
   }
 
   // 9. A player's score is the number of points of her color, plus the number of empty points that reach only her color.
+  def score[P: Shape](player: Player, position: Position[P]): Int =
+    Shape[P].all.map { point =>
+      position.at(point) match {
+        case Stone(p) =>
+          if (p == player) 1 else 0
+        case Empty =>
+          // This could made way faster by memoizing on the result of connectedGroup
+          val owners = connectedGroup(position)(point).flatMap(_.neighbours).toSet
+          if (owners == Set(player)) 1 else 0
+      }
+    }.sum
 
   // 10. The player with the higher score at the end of the game is the winner. Equal scores result in a tie.
 }
