@@ -1,6 +1,7 @@
 package game
 
 import simulacrum.typeclass
+import scala.Function.unlift
 
 /** Shape of a Go board. Should obey the law described in ShapeTests. */
 @typeclass trait Shape[A] {
@@ -9,15 +10,21 @@ import simulacrum.typeclass
 }
 
 object Shape {
-  implicit val point19IsShape = new Shape[Point19] {
-    def neighbours(p: Point19): Seq[Point19] =
-      List((p.x + 1, p.y), (p.x - 1, p.y), (p.x, p.y + 1), (p.x, p.y - 1))
-        .collect {
-          case (a, b) if a >= 1 && a <= 19 && b >= 1 && b <= 19 =>
-            Point19(a, b)
-        }
+  def unsafeIsShape[A](n: Int)(A: (Int, Int) => A, U: A => (Int, Int)): Shape[A] =
+    new Shape[A] {
+      def neighbours(a: A): Seq[A] = {
+        val (x, y) = U(a)
+        List((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1))
+          .collect {
+            case (a, b) if a >= 1 && a <= n && b >= 1 && b <= n =>
+              A(a, b)
+          }
+      }
 
-    def all: Seq[Point19] =
-      for { i <- 1 to 19; j <- 1 to 19 } yield Point19(i, j)
-  }
+      def all: Seq[A] =
+        for { i <- 1 to n; j <- 1 to n } yield A(i, j)
+    }
+
+  implicit val point19IsShape: Shape[Point19] =
+    unsafeIsShape(19)(Point19.apply, unlift(Point19.unapply))
 }
