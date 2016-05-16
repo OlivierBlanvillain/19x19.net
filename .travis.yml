@@ -4,3 +4,9 @@ scala:
 - 2.11.8
 
 sbt_args: "-J-Xmx2G"
+
+notifications:
+  email: false
+
+script: "sbt clean coverage test"
+after_success: "sbt coverageReport coveralls"
