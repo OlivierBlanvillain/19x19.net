@@ -1,0 +1,6 @@
+language: scala
+
+scala:
+- 2.11.8
+
+sbt_args: "-J-Xmx2G"
