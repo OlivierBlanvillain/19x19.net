@@ -1,7 +1,7 @@
 package game
 
-import simulacrum.typeclass
 import scala.Function.unlift
+import simulacrum.typeclass
 
 /** Shape of a Go board. Should obey the law described in ShapeTests. */
 @typeclass trait Shape[A] {

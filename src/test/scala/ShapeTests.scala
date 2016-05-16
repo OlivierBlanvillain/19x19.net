@@ -1,10 +1,10 @@
 package game
 
+import game.Shape.ops._
+import org.scalacheck.Arbitrary._
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
-import org.scalacheck.{Arbitrary, Gen}
-import org.scalacheck.Arbitrary._
-import game.Shape.ops._
 
 class ShapeTests extends FunSuite with Checkers {
   implicit def arbitraryShape[P: Shape]: Arbitrary[P] =
@@ -15,6 +15,11 @@ class ShapeTests extends FunSuite with Checkers {
 
   def neighboursAreUnique[P: Shape](point: P): Boolean =
     point.neighbours.distinct.size == point.neighbours.size
+
+  test("Point5") {
+    check(neighboursAreInAll[Point5] _)
+    check(neighboursAreUnique[Point5] _)
+  }
 
   test("Point19") {
     check(neighboursAreInAll[Point19] _)

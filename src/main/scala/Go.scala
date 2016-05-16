@@ -22,18 +22,27 @@ sealed trait Color
 case object Empty extends Color
 case class Stone(p: Player) extends Color
 
-class Position[P: Shape] private (repr: Map[P, Color]) {
+// 6a. A turn is either a pass; or a move
+sealed trait Turn[+P]
+case object Pass extends Turn[Nothing]
+case class Move[P](point: P) extends Turn[P]
+
+sealed trait IllegalMove
+// 6b. that doesn't repeat an earlier grid coloring.
+case class Superko(cycleLength: Int) extends IllegalMove
+// 8. The game ends after two consecutive passes.
+case object PlayAfterTwoPasses extends IllegalMove
+case object Occupied extends IllegalMove
+
+case class Position[P: Shape](repr: Map[P, Color]) {
   def at(point: P): Color =
     repr(point)
 
   def set(point: P, color: Color): Position[P] =
-    new Position(repr + (point -> color))
+    Position(repr + (point -> color))
 
   def capture(points: TraversableOnce[P]): Position[P] =
-    new Position(repr ++ points.map(_ -> Empty))
-
-  val empty: Position[P] =
-    new Position(Map()).capture(Shape[P].all)
+    Position(repr ++ points.map(_ -> Empty))
 
   // 3. A point P, not colored C, is said to reach C, if there is a path of adjacent points of P's color from P to a point of color C.
   def connectedGroup(point: P): Set[P] = {
@@ -73,9 +82,10 @@ class Position[P: Shape] private (repr: Map[P, Color]) {
   def move(player: Player, point: P): Position[P] = {
     val other = Stone(if (player == White) Black else White)
     val affectedOther: Seq[P] = point.neighbours.filter(n => this.at(n) == other)
-    val cleanedOther: Position[P] = this.set(point, Stone(player)).clear(affectedOther)
-    val cleanedSelf: Position[P] = cleanedOther.clear(List(point))
-    cleanedSelf
+
+    this.set(point, Stone(player))
+      .clear(affectedOther)
+      .clear(List(point))
   }
 
   // 9. A player's score is the number of points of her color, plus the number of empty points that reach only her color.
@@ -85,24 +95,18 @@ class Position[P: Shape] private (repr: Map[P, Color]) {
         case Stone(p) =>
           if (p == player) 1 else 0
         case Empty =>
+          val other = Stone(if (player == White) Black else White)
+          val owners = this.connectedGroup(point).flatMap(_.neighbours).map(this.at)
           // This could made way faster by memoizing on the result of connectedGroup
-          val owners = this.connectedGroup(point).flatMap(_.neighbours).toSet
-          if (owners == Set(player)) 1 else 0
+          if (owners.contains(other)) 0 else 1
       }
     }.sum
 }
 
-// 6a. A turn is either a pass; or a move
-sealed trait Turn[+P]
-case object Pass extends Turn[Nothing]
-case class Move[P](point: P) extends Turn[P]
-
-sealed trait IllegalMove
-// 6b. that doesn't repeat an earlier grid coloring.
-case class Superko(cycleLength: Int) extends IllegalMove
-// 8. The game ends after two consecutive passes.
-case object PlayAfterTwoPasses extends IllegalMove
-case object Occupied extends IllegalMove
+object Position {
+  def empty[P: Shape]: Position[P] =
+    Position(Map()).capture(Shape[P].all)
+}
 
 /** Logical rules of Go, as described in https://tromp.github.io/go.html.
   * Inspired from the haskell implementation linked on that page. */
