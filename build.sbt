@@ -8,8 +8,8 @@ libraryDependencies ++= Seq(
   compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1"),
   compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
 
-  "org.scalatest" %% "scalatest" % "3.0.0-M7" % "test",
-  "org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.0-RC1" % "test",
+  "org.scalacheck" %% "scalacheck" % "1.13.1" % "test"
 )
 
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oDF")
@@ -24,7 +24,7 @@ scalacOptions ++= Seq(
   "-language:experimental.macros",
   "-language:postfixOps",
   "-unchecked",
-  // "-Xfatal-warnings",
+  "-Xfatal-warnings",
   "-Xlint",
   "-Yinline-warnings",
   "-Yno-adapted-args",
