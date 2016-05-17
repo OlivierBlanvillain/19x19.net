@@ -1,8 +1,5 @@
 package game
 
-import cats.data.{NonEmptyList, OneAnd}
-import cats.std.list._
-// import cats.std.either._
 import game.Shape.ops._
 import scala.collection.mutable
 
@@ -30,8 +27,6 @@ case class Move[P](point: P) extends Turn[P]
 sealed trait IllegalMove
 // 6b. that doesn't repeat an earlier grid coloring.
 case class Superko(cycleLength: Int) extends IllegalMove
-// 8. The game ends after two consecutive passes.
-case object PlayAfterTwoPasses extends IllegalMove
 case object Occupied extends IllegalMove
 
 case class Position[P: Shape](repr: Map[P, Color]) {
@@ -52,7 +47,7 @@ case class Position[P: Shape](repr: Map[P, Color]) {
     val group: mutable.Set[P] = mutable.Set.empty
 
     while (!toSee.isEmpty) {
-      val p = toSee.dequeue
+      val p: P = toSee.dequeue
       seen += p
       if (this.at(p) == color) {
         group += p
@@ -65,11 +60,11 @@ case class Position[P: Shape](repr: Map[P, Color]) {
 
   // 4. Clearing a color is the process of emptying all points of that color that don't reach empty.
   def clear(points: Seq[P]): Position[P] = {
-    def dead(group: Set[P]) = group
+    def dead(group: Set[P]): Boolean = group
       .filter(_.neighbours.map(this.at).contains(Empty))
       .isEmpty
 
-    val captured = points
+    val captured: Seq[P] = points
       .map(this.connectedGroup)
       .filter(dead)
       .flatten
@@ -80,7 +75,7 @@ case class Position[P: Shape](repr: Map[P, Color]) {
   // 7. A move consists of coloring an empty point one's own color; then
   // clearing the opponent color, and then clearing one's own color.
   def move(player: Player, point: P): Position[P] = {
-    val other = Stone(if (player == White) Black else White)
+    val other: Color = Stone(if (player == White) Black else White)
     val affectedOther: Seq[P] = point.neighbours.filter(n => this.at(n) == other)
 
     this.set(point, Stone(player))
@@ -95,8 +90,8 @@ case class Position[P: Shape](repr: Map[P, Color]) {
         case Stone(p) =>
           if (p == player) 1 else 0
         case Empty =>
-          val other = Stone(if (player == White) Black else White)
-          val owners = this.connectedGroup(point).flatMap(_.neighbours).map(this.at)
+          val other: Color = Stone(if (player == White) Black else White)
+          val owners: Set[Color] = this.connectedGroup(point).flatMap(_.neighbours).map(this.at)
           // This could made way faster by memoizing on the result of connectedGroup
           if (owners.contains(other)) 0 else 1
       }
@@ -111,31 +106,37 @@ object Position {
 /** Logical rules of Go, as described in https://tromp.github.io/go.html.
   * Inspired from the haskell implementation linked on that page. */
 object Go {
-  def play[P: Shape](player: Player, turn: Turn[P])(past: NonEmptyList[Position[P]])
-      : Either[IllegalMove, NonEmptyList[Position[P]]] = {
-    val OneAnd(position: Position[P], _) = past
-    val unwraped: List[Position[P]] = past.unwrap
+  // 5a. Starting with an empty grid,
+  def playOnce[P: Shape](player: Player, turn: Turn[P], past: List[Position[P]])
+      : Either[IllegalMove, List[Position[P]]] = {
+    val position: Position[P] = past.headOption.getOrElse(Position.empty)
     turn match {
       case Pass =>
-        if (Some(position) == past.tail.headOption)
-          Left(PlayAfterTwoPasses)
-        else
-          Right(NonEmptyList(position, unwraped))
+        Right(position :: past)
 
       case Move(point) =>
         if (position.at(point) != Empty)
           Left(Occupied)
         else {
           val moved = position.move(player, point)
-          unwraped.zipWithIndex.collectFirst { case (p, i) if p == moved =>
+          past.zipWithIndex.collectFirst { case (p, i) if p == moved =>
             Left(Superko(i))
           }.getOrElse(
-            Right(NonEmptyList(moved, unwraped))
+            Right(moved :: past)
           )
         }
     }
   }
 
-  // 5a. Starting with an empty grid,
   // 5b. the players alternate turns, starting with Black.
+  // 8. The game ends after two consecutive passes.
+  def playAll[P: Shape](turns: Seq[Turn[P]]): Either[IllegalMove, List[Position[P]]] = {
+    val players: Stream[Player] = Stream.continually(List(Black, White)).flatten
+    val seed: Either[IllegalMove, List[Position[P]]] = Right(Nil)
+
+    players.zip(turns).foldLeft(seed) {
+      case (l @ Left(_), _) => l
+      case (Right(past), (player, turn)) => playOnce(player, turn, past)
+    }
+  }
 }

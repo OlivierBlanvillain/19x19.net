@@ -17,12 +17,8 @@ class GoTests extends FunSuite {
     }.mkString("|")
 
   test("5x5 capture") {
-    val moves = Seq(Point5(1, 2), Point5(1, 1), Point5(2, 1))
-    val p = players.zip(moves).foldLeft(Position.empty[Point5]) {
-      case (position, (player, point)) =>
-        position.move(player, point)
-    }
-    assert(show(p) ==
+    val positions = Go.playAll(Seq(Point5(1, 2), Point5(1, 1), Point5(2, 1)).map(Move.apply))
+    assert(show(positions.right.get.head) ==
         """. x . . .
           |x . . . .
           |. . . . .
@@ -31,11 +27,8 @@ class GoTests extends FunSuite {
   }
 
   test("5x5 3-1 score") {
-    val moves = Seq(Point5(1, 2), Point5(3, 3), Point5(2, 1))
-    val p = players.zip(moves).foldLeft(Position.empty[Point5]) {
-      case (position, (player, point)) =>
-        position.move(player, point)
-    }
+    val positions = Go.playAll(Seq(Point5(1, 2), Point5(3, 3), Point5(2, 1)).map(Move.apply))
+    val p = positions.right.get.head
     assert(show(p) ==
       """. x . . .
         |x . . . .
@@ -46,13 +39,10 @@ class GoTests extends FunSuite {
   }
 
   test("5x5 9-11 score") {
-    val moves = Seq(
+    val p = Go.playAll(Seq(
       Point5(3, 4), Point5(3, 3), Point5(4, 3), Point5(4, 4), Point5(4, 5), Point5(2, 4),
       Point5(5, 4), Point5(3, 2), Point5(2, 5), Point5(1, 4), Point5(4, 2), Point5(3, 1)
-    )
-    val p = players.zip(moves).foldLeft(Position.empty[Point5]) {
-      case (position, (player, point)) => position.move(player, point)
-    }
+    ).map(Move.apply)).right.get.head
     assert(show(p) ==
       """. . o . .
         |. . o x .
@@ -62,6 +52,7 @@ class GoTests extends FunSuite {
     assert(p.score(Black) -> p.score(White) == 9 -> 11)
   }
 
+  // Optimal play for opening at (3, 4)
   // http://erikvanderwerf.tengen.nl/5x5/5x5solved.html
   val movesOptimal34: Seq[Point5] = Seq(
     (3, 4), (3, 3), (4, 3), (4, 4), (4, 5),
@@ -70,9 +61,8 @@ class GoTests extends FunSuite {
     (1, 3), (4, 1), (1, 1), (1, 5)
   ).map(Function.tupled(Point5.apply))
 
-  test("5x5 positions integration") {
-    // Optimal play for opening at Point5(3, 4)
-    val positionsOptimal34: Seq[String] = Seq(
+  test("5x5 full game positions") {
+    val expectedPositions: Seq[String] = Seq(
       ". . . . .|. . . . .|. . . . .|. . x . .|. . . . .",
       ". . . . .|. . . . .|. . o . .|. . x . .|. . . . .",
       ". . . . .|. . . . .|. . o x .|. . x . .|. . . . .",
@@ -93,26 +83,30 @@ class GoTests extends FunSuite {
       "o . o x .|. o o x .|o . o x .|o o x . x|. x x x .",
       "o . o x .|. o o x .|o . o x .|o o x . x|x x x x ."
     )
-    players.zip(movesOptimal34.zip(positionsOptimal34)).foldLeft(Position.empty[Point5]) {
-      case (position, (player, (move, expected))) =>
-        val next = position.move(player, move)
-        assert(show(next) == expected)
-        next
-    }
+    Go.playAll(movesOptimal34.map(Move.apply)).right.get.reverse
+      .zip(expectedPositions).foreach { case (position, expected) =>
+        assert(show(position) == expected)
+      }
   }
 
-  test("5x5 scores integration") {
-    val scoresOptimal34: Seq[(Int, Int)] = Seq(
-      (25, 0), (1, 1),  (2, 1), (2, 2),  (3, 2),
-      (3, 3), (6, 2),  (6, 3),  (8, 3),  (8, 4),
-      (9, 4),  (9, 11), (10, 5), (10, 6), (10, 6),
-      (10, 8), (14, 8), (13, 11), (14, 11)
+  test("5x5 full game scores integration") {
+    val expectedScores: Seq[(Int, Int)] = Seq(
+      (25, 0), (1, 1), (2, 1), (2, 2), (3, 2), (3, 3), (6, 2), (6, 3), (8, 3), (8, 4),
+      (9, 4), (9, 11), (10, 5), (10, 6), (10, 6), (10, 8), (14, 8), (13, 11), (14, 11)
     )
-    players.zip(movesOptimal34.zip(scoresOptimal34)).foldLeft(Position.empty[Point5]) {
-      case (position, (player, (move, (backScore, whiteScore)))) =>
-        val next = position.move(player, move)
-        assert(next.score(Black) -> next.score(White) == backScore -> whiteScore)
-        next
-    }
+    Go.playAll(movesOptimal34.map(Move.apply)).right.get.reverse
+      .zip(expectedScores).foreach { case (position, (backScore,  whiteScore)) =>
+        assert(position.score(Black) -> position.score(White) == backScore -> whiteScore)
+      }
+  }
+
+  test("5x5 occupied") {
+    val moves = Seq(Move(Point5(1, 1)), Pass, Move(Point5(1, 1)))
+    assert(Go.playAll(moves) == Left(Occupied))
+  }
+
+  test("5x5 superko") {
+    val moves = Seq(Point5(1, 2), Point5(1, 1), Point5(2, 1), Point5(1, 1))
+    assert(Go.playAll(moves.map(Move.apply)) == Left(Superko(0)))
   }
 }

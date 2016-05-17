@@ -10,19 +10,19 @@ import simulacrum.typeclass
 }
 
 object Shape {
-  def unsafeIsShape[A](n: Int)(A: (Int, Int) => A, U: A => (Int, Int)): Shape[A] =
+  def unsafeIsShape[A](n: Int)(ap: (Int, Int) => A, up: A => (Int, Int)): Shape[A] =
     new Shape[A] {
       def neighbours(a: A): Seq[A] = {
-        val (x, y) = U(a)
+        val (x, y) = up(a)
         List((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1))
           .collect {
             case (a, b) if a >= 1 && a <= n && b >= 1 && b <= n =>
-              A(a, b)
+              ap(a, b)
           }
       }
 
       def all: Seq[A] =
-        for { i <- 1 to n; j <- 1 to n } yield A(i, j)
+        for { i <- 1 to n; j <- 1 to n } yield ap(i, j)
     }
 
   implicit val point19IsShape: Shape[Point19] =
