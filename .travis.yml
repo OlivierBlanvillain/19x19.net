@@ -3,13 +3,16 @@ language: scala
 scala:
 - 2.11.8
 
+jdk:
+  - oraclejdk8
+
 sbt_args: "-J-Xmx2G"
 
 notifications:
   email: false
 
-script: "sbt clean coverage test"
-after_success: "sbt coverageReport coveralls"
+script: "sbt clean validate && sbt clean coverage validateJVM"
+after_success: "sbt coverageAggregate && sbt coveralls"
 
 cache:
   directories:
