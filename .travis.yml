@@ -1,18 +1,13 @@
 language: scala
-
-scala:
-- 2.11.8
-
-jdk:
-  - oraclejdk8
-
+scala: 2.11.8
+jdk: oraclejdk8
 sbt_args: "-J-Xmx2G"
 
 notifications:
-  email: false
+  email:
+    false
 
-script: "sbt clean validate && sbt clean coverage validateJVM"
-after_success: "sbt coverageAggregate && sbt coveralls"
+script: sbt clean validate && sbt clean coverage validateJVM && sbt coverageReport && bash <(curl -s https://codecov.io/bash)
 
 cache:
   directories:
