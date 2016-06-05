@@ -1,15 +1,16 @@
 package client
 
 import scalacss.Defaults._
+import scalacss.Macros.Color
 import scalacss.mutable.Register
 import scalacss.{Length, Percentage}
 
 class BoardStyle(implicit r: Register) extends StyleSheet.Inline()(r) {
   import dsl._
 
-  def size(length: Percentage[Int]) = mixin(width(length), height(length))
-  def size(length: Length[Int])     = mixin(width(length), height(length))
-  def size(length: String)          = mixin(width :=! length, height :=! length)
+  private def size(length: Percentage[Int]) = mixin(width(length), height(length))
+  private def size(length: Length[Int])     = mixin(width(length), height(length))
+  private def size(length: String)          = mixin(width :=! length, height :=! length)
 
   val gameSize = 19
   val gridUnit = 36
@@ -50,4 +51,29 @@ class BoardStyle(implicit r: Register) extends StyleSheet.Inline()(r) {
     point,
     boxShadow := "2px 2px rgba(0, 0, 0, 0.6)",
     backgroundColor(whiteColor))
+
+  private def pseudoCirle(c: Color) = mixin(
+    content := "''",
+    borderRadius(50.%%),
+    display.inlineBlock,
+    backgroundColor(c))
+
+  private def hover(c: Color) = style(
+    point,
+    &.hover(&.before(
+      size(100.%%),
+      opacity(0.6),
+      pseudoCirle(c))))
+
+  val blackHover = hover(blackColor)
+  val whiteHover = hover(whiteColor)
+
+  private def last(c: Color) = style(
+    &.before(
+      size(30.%%),
+      margin(35.%%),
+      pseudoCirle(c)))
+
+  val blackLast = last(whiteColor)
+  val whiteLast = last(blackColor)
 }
