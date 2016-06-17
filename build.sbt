@@ -1,10 +1,10 @@
 val scala         = "2.11.8"
-val autowire      = "0.2.5"
 val boopickle     = "1.1.3"
 val cats          = "0.6.0-M2"
 val http4s        = "0.14.1a"
 val kindProjector = "0.7.1"
 val logback       = "1.1.7"
+val monix         = "2.0-RC6"
 val paradise      = "2.1.0"
 val react         = "15.1.0"
 val scalacheck    = "1.13.1"
@@ -13,7 +13,6 @@ val scalajsReact  = "0.11.1"
 val scalatest     = "3.0.0-RC1"
 val shapeless     = "2.3.1"
 val simulacrum    = "0.7.0"
-
 val scalacheckShapeless = "1.1.0-RC3"
 
 lazy val root = project.in(file("."))
@@ -27,13 +26,13 @@ lazy val shared = crossProject
   .jsSettings(jsSettings: _*)
   .disablePlugins(spray.revolver.RevolverPlugin)
   .settings(libraryDependencies ++= Seq(
-    "com.lihaoyi" %%% "autowire" % autowire,
-    "me.chrons" %%% "boopickle" % boopickle,
-    "org.typelevel" %%% "cats" % cats,
-    "org.scalatest" %%% "scalatest" % scalatest,
-    "org.scalacheck" %%% "scalacheck" % scalacheck,
-    "com.chuusai" %%% "shapeless" % shapeless,
-    "com.github.alexarchambault" %%% "scalacheck-shapeless_1.13" % scalacheckShapeless,
+    "com.chuusai"    %%% "shapeless" % shapeless,
+    "io.monix"       %%% "monix" % monix,
+    "me.chrons"      %%% "boopickle" % boopickle,
+    "org.typelevel"  %%% "cats" % cats,
+    "org.scalatest"  %%% "scalatest" % scalatest % "test",
+    "org.scalacheck" %%% "scalacheck" % scalacheck % "test",
+    "com.github.alexarchambault" %%% "scalacheck-shapeless_1.13" % scalacheckShapeless % "test",
     compilerPlugin("com.github.mpilquist" %% "simulacrum" % simulacrum),
     compilerPlugin("org.spire-math" %% "kind-projector" % kindProjector),
     compilerPlugin("org.scalamacros" % "paradise" % paradise cross CrossVersion.full)))
@@ -104,8 +103,8 @@ lazy val settings = Seq(
     "-Yinline-warnings",
     "-Yno-adapted-args",
     "-Ywarn-dead-code",
-    "-Ywarn-numeric-widen",
-    "-Ywarn-value-discard")
+    // "-Ywarn-value-discard", see https://github.com/ochrons/boopickle/pull/59
+    "-Ywarn-numeric-widen")
 ) ++ warnUnusedImport
 
 lazy val jsSettings = settings ++ Seq(
