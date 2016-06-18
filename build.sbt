@@ -1,18 +1,19 @@
 val scala         = "2.11.8"
-val akkaHttp      = "2.4.5"
-val akkaHttpTest  = "2.4.2-RC3"
 val autowire      = "0.2.5"
 val boopickle     = "1.1.3"
 val cats          = "0.6.0-M2"
+val http4s        = "0.14.1a"
 val kindProjector = "0.7.1"
+val logback       = "1.1.7"
 val paradise      = "2.1.0"
 val react         = "15.1.0"
 val scalacheck    = "1.13.1"
 val scalaCss      = "0.4.1"
 val scalajsReact  = "0.11.1"
 val scalatest     = "3.0.0-RC1"
-val simulacrum    = "0.7.0"
 val shapeless     = "2.3.1"
+val simulacrum    = "0.7.0"
+
 val scalacheckShapeless = "1.1.0-RC3"
 
 lazy val root = project.in(file("."))
@@ -47,8 +48,11 @@ lazy val server = project
     unmanagedResourceDirectories in Compile += baseDirectory.value / ".." / "static",
     assembly <<= assembly dependsOn (fullOptJS in Compile in client),
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-http-experimental" % akkaHttp,
-      "com.typesafe.akka" %% "akka-http-testkit-experimental" % akkaHttpTest % "test"))
+      "ch.qos.logback" % "logback-classic" % logback,
+      "org.http4s" %% "http4s-dsl" % http4s,
+      "org.http4s" %% "http4s-core" % http4s,
+      "org.http4s" %% "http4s-blaze-server" % http4s,
+      "org.http4s" %% "http4s-blaze-client" % http4s % "test"))
 
 lazy val client = project
   .enablePlugins(ScalaJSPlugin)
@@ -101,8 +105,8 @@ lazy val settings = Seq(
     "-Yno-adapted-args",
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
-    "-Ywarn-unused-import",
-    "-Ywarn-value-discard"))
+    "-Ywarn-value-discard")
+) ++ warnUnusedImport
 
 lazy val jsSettings = settings ++ Seq(
   emitSourceMaps := true,
@@ -112,10 +116,19 @@ lazy val jsSettings = settings ++ Seq(
   persistLauncher in Compile := true,
   persistLauncher in Test := false,
   skip in packageJSDependencies := false,
+  fastOptJS <<= (fastOptJS in Compile) dependsOn (packageMinifiedJSDependencies in Compile),
   artifactPath in (Compile, fastOptJS) :=
-    ((crossTarget in (Compile, fastOptJS)).value / ((moduleName in fastOptJS).value + "-opt.js")))
+    ((crossTarget in (Compile, fastOptJS)).value /
+      ((moduleName in fastOptJS).value + "-opt.js")))
+
+lazy val warnUnusedImport = Seq(
+  scalacOptions ++= (
+    if (CrossVersion.partialVersion(scalaVersion.value) == Some((2, 10))) Nil
+    else Seq("-Ywarn-unused-import")),
+  scalacOptions in (Compile, console) ~= {_.filterNot("-Ywarn-unused-import" == _)},
+  scalacOptions in (Test, console) <<= (scalacOptions in (Compile, console)))
 
 addCommandAlias("validateJVM", ";sharedJVM/compile;server/compile;sharedJVM/test;server/test")
-addCommandAlias("validateJS", ";sharedJS/compile;client/compile;sharedJS/test;client/test")
-addCommandAlias("validate", ";validateJVM;validateJS")
+addCommandAlias("validateJS", ";sharedJS/compile;client/compile;sharedJS/test;client/test;client/fastOptJS")
+addCommandAlias("validate", ";validateJS;validateJVM;server/assembly")
 addCommandAlias("run", ";client/fastOptJS;server/reStart")

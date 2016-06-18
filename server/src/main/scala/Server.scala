@@ -1,17 +1,36 @@
 package server
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.stream.ActorMaterializer
+import org.http4s._
+import org.http4s.dsl._
+import org.http4s.server.{ServerApp, Server => Http4sServer}
+import org.http4s.server.blaze._
+import scalaz.concurrent.Task
+import java.io.File
 
-object Server extends App {
-  println("Starting server...")
+object Server extends ServerApp {
+  def server(args: List[String]): Task[Http4sServer] =
+    BlazeBuilder.mountService(service).start
 
-  implicit val system = ActorSystem("system")
-  implicit val materializer = ActorMaterializer()
-  import system.dispatcher
+  val service: HttpService = HttpService {
+    case GET -> Root =>
+      fromContent("index.html")
 
-  Http().bindAndHandle(Routes(), "localhost", 8080)
-    .map(s"Server online at http:/" + _.localAddress)
-    .foreach(println)
+    case GET -> Root / segment =>
+      fromContent(segment)
+
+    case GET -> Root / "target" / segment =>
+      fromContent(s"target/$segment")
+  }
+
+  def fromContent(path: String): Task[Response] = {
+    val response: Option[Response] =
+      if (new File("LICENSE").exists)
+        StaticFile.fromString(s"static/content/$path")    // Used in test
+      else if (new File("../LICENSE").exists)
+        StaticFile.fromString(s"../static/content/$path") // Used in run
+      else
+        StaticFile.fromResource(s"content/$path")         // Used in assembly
+
+    response.fold(NotFound())(Task.now)
+  }
 }

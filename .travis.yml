@@ -7,7 +7,7 @@ notifications:
   email:
     false
 
-script: sbt clean validate && sbt clean coverage validateJVM && sbt coverageReport && bash <(curl -s https://codecov.io/bash)
+script: sbt clean validate && sbt coverage validateJVM && sbt coverageReport && bash <(curl -s https://codecov.io/bash)
 
 cache:
   directories:
