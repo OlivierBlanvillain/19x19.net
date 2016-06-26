@@ -1,4 +1,4 @@
-package client
+package nineteen.client
 
 import japgolly.scalajs.react.ReactDOM
 import monix.execution.Scheduler.Implicits.global
@@ -6,8 +6,8 @@ import org.scalajs.dom
 import scala.scalajs.js.JSApp
 import scalacss.Defaults._
 import scalacss.ScalaCssReact._
-import game._
-import model._
+import nineteen.game._
+import nineteen.model._
 
 object Main extends JSApp {
   def main(): Unit = {

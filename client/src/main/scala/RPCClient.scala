@@ -1,8 +1,8 @@
-package client
+package nineteen.client
 
 import java.nio.ByteBuffer
-import model._
-import model.CachedPicklers._
+import nineteen.model._
+import nineteen.model.CachedPicklers._
 import monixwire._
 import scala.scalajs.js.typedarray.TypedArrayBufferOps._
 import org.scalajs.dom.raw.MessageEvent

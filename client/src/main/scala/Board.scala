@@ -1,6 +1,6 @@
-package client
+package nineteen.client
 
-import game._
+import nineteen.game._
 import japgolly.scalajs.react.vdom.prefix_<^._
 import japgolly.scalajs.react.{vdom, ReactComponentB, ReactComponentC}
 import org.scalajs.dom.{raw, svg, html}

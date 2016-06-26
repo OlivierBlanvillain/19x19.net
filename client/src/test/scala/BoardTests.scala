@@ -1,6 +1,6 @@
-package client
+package nineteen.client
 
-import game._
+import nineteen.game._
 import japgolly.scalajs.react.test._
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Shapeless._

@@ -1,4 +1,4 @@
-package model
+package nineteen.model
 
 import monixwire._
 import boopickle.Default._

@@ -1,4 +1,4 @@
-package server
+package nineteen.server
 
 import java.io.File
 import org.http4s._

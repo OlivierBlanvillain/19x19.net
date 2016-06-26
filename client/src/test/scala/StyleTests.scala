@@ -1,4 +1,4 @@
-package client
+package nineteen.client
 
 import org.scalatest.FunSuite
 

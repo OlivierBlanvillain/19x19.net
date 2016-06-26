@@ -1,6 +1,6 @@
-package game
+package nineteen.game
 
-import game.Shape.ops._
+import nineteen.game.Shape.ops._
 import org.scalacheck.Arbitrary._
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.FunSuite

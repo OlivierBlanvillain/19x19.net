@@ -1,4 +1,4 @@
-package game
+package nineteen.game
 
 import org.scalatest.FunSuite
 

@@ -1,4 +1,4 @@
-package server
+package nineteen.server
 
 import org.scalatest.FunSuite
 import org.http4s.server.Server

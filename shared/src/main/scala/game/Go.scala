@@ -1,6 +1,6 @@
-package game
+package nineteen.game
 
-import game.Shape.ops._
+import nineteen.game.Shape.ops._
 import scala.collection.mutable
 
 // 1a. Go is played on a 19x19 square grid of points

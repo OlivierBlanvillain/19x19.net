@@ -1,4 +1,4 @@
-package game
+package nineteen.game
 
 import scala.Function.unlift
 

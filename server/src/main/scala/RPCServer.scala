@@ -1,8 +1,8 @@
-package server
+package nineteen.server
 
 import java.nio.ByteBuffer
-import model._
-import model.CachedPicklers._
+import nineteen.model._
+import nineteen.model.CachedPicklers._
 import monix.reactive.Observable
 import monixwire._
 import org.http4s.websocket.WebsocketBits.{Binary, WebSocketFrame}

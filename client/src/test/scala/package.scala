@@ -1,4 +1,6 @@
-import game._
+package nineteen
+
+import nineteen.game._
 import org.scalacheck.{Gen, Arbitrary}
 
 package object client {

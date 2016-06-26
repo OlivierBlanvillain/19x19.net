@@ -1,4 +1,4 @@
-package client
+package nineteen.client
 
 import scalacss.Defaults._
 import scalacss.Macros.Color
