@@ -1,14 +1,21 @@
 package client
 
-import game._
 import japgolly.scalajs.react.ReactDOM
+import monix.execution.Scheduler.Implicits.global
 import org.scalajs.dom
 import scala.scalajs.js.JSApp
 import scalacss.Defaults._
 import scalacss.ScalaCssReact._
+import game._
+import model._
 
-object Client extends JSApp {
+object Main extends JSApp {
   def main(): Unit = {
+
+    val client = new RPCClient
+
+    client.call(Foo(1, 1000)).foreach(println)
+
     val movesOptimal34: Seq[Point19] = Seq(
       (3, 4), (3, 3), (4, 3), (4, 4), (4, 5),
       (2, 4), (5, 4), (3, 2), (2, 5), (1, 4),

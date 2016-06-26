@@ -70,7 +70,8 @@ trait ObservableServer[PickleType, Request <: PathDependentRequest, Response <: 
 
   def networkSend(data: PickleType): Unit
 
-  def networkReceive(data: PickleType): Unit =
+  def networkReceive(data: PickleType): Unit = {
+    println(s"Server side got $data:${data.##}")
     decode(data) match {
       case Start(c) =>
         val observable = new Observer[Response] {
@@ -91,6 +92,7 @@ trait ObservableServer[PickleType, Request <: PathDependentRequest, Response <: 
 
       case _ => ???
     }
+  }
 
   protected implicit class TupledFunction1[A, B](f: Function1[A, B]) {
     def tupled = f

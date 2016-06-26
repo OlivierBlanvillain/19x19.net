@@ -30,9 +30,9 @@ lazy val shared = crossProject
     "io.monix"       %%% "monix" % monix,
     "me.chrons"      %%% "boopickle" % boopickle,
     "org.typelevel"  %%% "cats" % cats,
-    "org.scalatest"  %%% "scalatest" % scalatest % "test",
-    "org.scalacheck" %%% "scalacheck" % scalacheck % "test",
-    "com.github.alexarchambault" %%% "scalacheck-shapeless_1.13" % scalacheckShapeless % "test",
+    "org.scalatest"  %%% "scalatest" % scalatest,
+    "org.scalacheck" %%% "scalacheck" % scalacheck,
+    "com.github.alexarchambault" %%% "scalacheck-shapeless_1.13" % scalacheckShapeless,
     compilerPlugin("com.github.mpilquist" %% "simulacrum" % simulacrum),
     compilerPlugin("org.spire-math" %% "kind-projector" % kindProjector),
     compilerPlugin("org.scalamacros" % "paradise" % paradise cross CrossVersion.full)))

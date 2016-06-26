@@ -1,17 +1,21 @@
 package server
 
+import java.io.File
 import org.http4s._
 import org.http4s.dsl._
-import org.http4s.server.{ServerApp, Server => Http4sServer}
+import org.http4s.server.{Server, ServerApp}
 import org.http4s.server.blaze._
+import org.http4s.server.websocket.WS
 import scalaz.concurrent.Task
-import java.io.File
 
-object Server extends ServerApp {
-  def server(args: List[String]): Task[Http4sServer] =
+object Main extends ServerApp {
+  def server(args: List[String]): Task[Server] =
     BlazeBuilder.mountService(service).start
 
   val service: HttpService = HttpService {
+    case GET -> Root / "ws" =>
+      WS(new RPCServer().exchange)
+
     case GET -> Root =>
       fromContent("index.html")
 
