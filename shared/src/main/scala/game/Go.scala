@@ -3,6 +3,9 @@ package nineteen.game
 import nineteen.game.Shape.ops._
 import scala.collection.mutable
 
+// Logical rules of Go, as described in https://tromp.github.io/go.html.
+// Inspired from the Haskell implementation available in the above website.
+
 // 1a. Go is played on a 19x19 square grid of points
 case class Point19(x: Int, y: Int) {
   require(x >= 1 && x <= 19)
@@ -103,8 +106,6 @@ object Position {
     Position(Map()).capture(Shape[P].all)
 }
 
-/** Logical rules of Go, as described in https://tromp.github.io/go.html.
-  * Inspired from the haskell implementation linked on that page. */
 object Go {
   // 5a. Starting with an empty grid,
   def playOnce[P: Shape](player: Player, turn: Turn[P], past: List[Position[P]])

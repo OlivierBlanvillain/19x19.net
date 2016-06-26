@@ -15,3 +15,7 @@ object CachedPicklers {
   implicit val callPickler: Pickler[Request] = generatePickler[Request]
   implicit val resultPickler: Pickler[Response] = generatePickler[Response]
 }
+
+object Routes {
+  val websocket: String = "ws"
+}

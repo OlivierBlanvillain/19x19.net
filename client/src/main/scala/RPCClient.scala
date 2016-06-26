@@ -1,19 +1,21 @@
 package nineteen.client
 
 import java.nio.ByteBuffer
-import nineteen.model._
-import nineteen.model.CachedPicklers._
-import monixwire._
-import scala.scalajs.js.typedarray.TypedArrayBufferOps._
 import org.scalajs.dom.raw.MessageEvent
 import org.scalajs.dom.{CloseEvent, ErrorEvent, Event, WebSocket}
+import scala.scalajs.js.Dynamic.global
+import scala.scalajs.js.typedarray.TypedArrayBufferOps._
 import scala.scalajs.js.typedarray.{TypedArrayBuffer, ArrayBuffer}
 
+import monixwire._
+import nineteen.model._
+import nineteen.model.CachedPicklers._
 class RPCClient
     extends BoopickleSerializers[Request, Response]
     with ObservableClient[ByteBuffer, Request, Response] {
 
-  val webSocket = new WebSocket("ws://localhost:8080/ws")
+  private val url: String = s"ws://${global.window.location.host}/${Routes.websocket}"
+  private val webSocket = new WebSocket(url)
   webSocket.binaryType = "arraybuffer"
 
   webSocket.onopen = (event: Event) =>

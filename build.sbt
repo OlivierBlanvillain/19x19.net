@@ -59,7 +59,7 @@ lazy val client = project
   .dependsOn(sharedJS)
   .disablePlugins(spray.revolver.RevolverPlugin)
   .settings(Seq(fullOptJS, fastOptJS, packageJSDependencies, packageScalaJSLauncher, packageMinifiedJSDependencies)
-    .map(task => crossTarget in (Compile, task) := file("static/content/target")))
+    .map(task => crossTarget in (Compile, task) := file("static/target")))
   .settings(
     libraryDependencies ++= Seq(
       "com.github.japgolly.scalajs-react" %%% "core" % scalajsReact,
@@ -103,7 +103,7 @@ lazy val settings = Seq(
     "-Yinline-warnings",
     "-Yno-adapted-args",
     "-Ywarn-dead-code",
-    // "-Ywarn-value-discard", see https://github.com/ochrons/boopickle/pull/59
+    "-Ywarn-value-discard",
     "-Ywarn-numeric-widen")
 ) ++ warnUnusedImport
 
