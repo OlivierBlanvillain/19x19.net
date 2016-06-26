@@ -1,16 +1,16 @@
 val scala         = "2.11.8"
-val boopickle     = "1.1.3"
-val cats          = "0.6.0-M2"
+val boopickle     = "1.2.3"
+val cats          = "0.6.0"
 val http4s        = "0.14.1a"
-val kindProjector = "0.7.1"
+val kindProjector = "0.8.0"
 val logback       = "1.1.7"
-val monix         = "2.0-RC6"
+val monix         = "2.0-RC7"
 val paradise      = "2.1.0"
 val react         = "15.1.0"
 val scalacheck    = "1.13.1"
 val scalaCss      = "0.4.1"
 val scalajsReact  = "0.11.1"
-val scalatest     = "3.0.0-RC1"
+val scalatest     = "3.0.0-RC3"
 val shapeless     = "2.3.1"
 val simulacrum    = "0.7.0"
 val scalacheckShapeless = "1.1.0-RC3"
@@ -26,11 +26,11 @@ lazy val shared = crossProject
   .jsSettings(jsSettings: _*)
   .disablePlugins(spray.revolver.RevolverPlugin)
   .settings(libraryDependencies ++= Seq(
-    "com.chuusai"    %%% "shapeless" % shapeless,
-    "io.monix"       %%% "monix" % monix,
-    "me.chrons"      %%% "boopickle" % boopickle,
-    "org.typelevel"  %%% "cats" % cats,
-    "org.scalatest"  %%% "scalatest" % scalatest,
+    "com.chuusai"    %%% "shapeless"  % shapeless,
+    "io.monix"       %%% "monix"      % monix,
+    "me.chrons"      %%% "boopickle"  % boopickle,
+    "org.typelevel"  %%% "cats"       % cats,
+    "org.scalatest"  %%% "scalatest"  % scalatest,
     "org.scalacheck" %%% "scalacheck" % scalacheck,
     "com.github.alexarchambault" %%% "scalacheck-shapeless_1.13" % scalacheckShapeless,
     compilerPlugin("com.github.mpilquist" %% "simulacrum" % simulacrum),
