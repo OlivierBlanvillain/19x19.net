@@ -1,6 +1,5 @@
 package game
 
-import game.Shape.ops._
 import scala.collection.mutable
 
 // 1a. Go is played on a 19x19 square grid of points
@@ -51,7 +50,7 @@ case class Position[P: Shape](repr: Map[P, Color]) {
       seen += p
       if (this.at(p) == color) {
         group += p
-        toSee ++= p.neighbours.filterNot(seen.contains)
+        toSee ++= Shape[P].neighbours(p).filterNot(seen.contains)
       }
     }
 
@@ -61,7 +60,7 @@ case class Position[P: Shape](repr: Map[P, Color]) {
   // 4. Clearing a color is the process of emptying all points of that color that don't reach empty.
   def clear(points: Seq[P]): Position[P] = {
     def dead(group: Set[P]): Boolean = group
-      .filter(_.neighbours.map(this.at).contains(Empty))
+      .filter(p => Shape[P].neighbours(p).map(this.at).contains(Empty))
       .isEmpty
 
     val captured: Seq[P] = points
@@ -76,7 +75,7 @@ case class Position[P: Shape](repr: Map[P, Color]) {
   // clearing the opponent color, and then clearing one's own color.
   def move(player: Player, point: P): Position[P] = {
     val other: Color = Stone(if (player == White) Black else White)
-    val affectedOther: Seq[P] = point.neighbours.filter(n => this.at(n) == other)
+    val affectedOther: Seq[P] = Shape[P].neighbours(point).filter(n => this.at(n) == other)
 
     this.set(point, Stone(player))
       .clear(affectedOther)
@@ -91,7 +90,7 @@ case class Position[P: Shape](repr: Map[P, Color]) {
           if (p == player) 1 else 0
         case Empty =>
           val other: Color = Stone(if (player == White) Black else White)
-          val owners: Set[Color] = this.connectedGroup(point).flatMap(_.neighbours).map(this.at)
+          val owners: Set[Color] = this.connectedGroup(point).flatMap(Shape[P].neighbours).map(this.at)
           // This could made way faster by memoizing on the result of connectedGroup
           if (owners.contains(other)) 0 else 1
       }

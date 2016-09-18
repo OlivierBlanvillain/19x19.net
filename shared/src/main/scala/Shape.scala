@@ -1,15 +1,16 @@
 package game
 
 import scala.Function.unlift
-import simulacrum.typeclass
 
 /** Shape of a Go board. Should obey the law described in ShapeTests. */
-@typeclass trait Shape[A] {
+trait Shape[A] {
   def neighbours(a: A): Seq[A]
   def all: Seq[A]
 }
 
 object Shape {
+  def apply[A](implicit s: Shape[A]): Shape[A] = s
+
   def unsafeIsShape[A](n: Int)(ap: (Int, Int) => A, up: A => (Int, Int)): Shape[A] =
     new Shape[A] {
       def neighbours(a: A): Seq[A] = {

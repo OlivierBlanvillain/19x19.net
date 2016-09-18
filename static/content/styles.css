@@ -1,0 +1,27 @@
+.empty {
+  width: calc(100% / 19 - 2px);
+  height: calc(100% / 19 - 2px);
+  float: left;
+  margin: 1px;
+  border-radius: 50%;
+}
+
+.black {
+  width: calc(100% / 19 - 2px);
+  height: calc(100% / 19 - 2px);
+  float: left;
+  margin: 1px;
+  border-radius: 50%;
+  box-shadow: 2px 2px rgba(0, 0, 0, 0.6);
+  background-color: #333333;
+}
+
+.white {
+  width: calc(100% / 19 - 2px);
+  height: calc(100% / 19 - 2px);
+  float: left;
+  margin: 1px;
+  border-radius: 50%;
+  box-shadow: 2px 2px rgba(0, 0, 0, 0.6);
+  background-color: #f3f3f3;
+}
